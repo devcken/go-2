@@ -1,0 +1,128 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.1.RELEASE'
+        queryDslVersion = '4.0.9'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "com.querydsl:querydsl-sql-codegen:4.1.4"
+        classpath "com.h2database:h2:1.4.193"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'idea'
+
+import groovy.sql.Sql;
+import com.querydsl.sql.codegen.MetaDataExporter;
+
+sourceSets {
+    generated {
+        java {
+            srcDirs = ["src/main/java/querydsl"]
+        }
+    }
+    main {
+        java.srcDirs = ["src/main/java", "src/main/java/querydsl"]
+        output.resourcesDir = "build/classes/main"
+    }
+}
+
+jar {
+    baseName = 'gonotwo'
+    version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    all.collect { configuration ->
+        configuration.exclude group: 'commons-logging', module: 'commons-logging'
+        configuration.exclude group: 'log4j', module: 'log4j'
+        configuration.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        configuration.exclude group: 'org.slf4j', module: 'slf4j-jcl'
+        configuration.exclude group: 'org.slf4j', module: 'slf4j-jdk14'
+    }
+
+    querydslapt
+    h2Driver
+}
+
+dependencies {
+    // Commons-Lang
+    compile 'org.apache.commons:commons-lang3:3.5'
+
+    // Guava
+    compile 'com.google.guava:guava:21.0'
+
+    // Spring Boot
+    compile 'org.springframework.boot:spring-boot-starter-data-rest'
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+
+    // Hibernate-JPA
+    compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+
+    // QueryDSL
+    compile "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    compile "com.querydsl:querydsl-sql:${queryDslVersion}"
+    querydslapt "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // Datasource
+    compile "com.zaxxer:HikariCP:2.4.3"
+
+    // H2
+    runtime 'com.h2database:h2'
+    h2Driver 'com.h2database:h2'
+    compile 'com.vividsolutions:jts:1.13'
+    h2Driver 'com.vividsolutions:jts:1.13'
+
+    // Jackson-DataType-JTS
+    compile 'com.bedatadriven:jackson-datatype-jts:2.2'
+
+    // Jayway - json-path
+    compile 'com.jayway.jsonpath:json-path:2.2.0'
+
+    // Test
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+task generateQueryDSL(
+        type: JavaCompile,
+        group: 'queryDSL',
+        description: 'Generates the QueryDSL query types') {
+    configurations.h2Driver.each {file ->
+        gradle.class.classLoader.addURL(file.toURI().toURL())
+    }
+
+    def sql = Sql.newInstance('jdbc:h2:file:./data/test', 'sa', '', 'org.h2.Driver')
+
+    MetaDataExporter exporter = new MetaDataExporter()
+
+    exporter.setTargetFolder(sourceSets.generated.java.srcDirs.iterator().next())
+    exporter.setPackageName('io.devcken')
+
+    try {
+        exporter.export(sql.getConnection().getMetaData())
+    } finally {
+        sql.close()
+    }
+}
+
+clean {
+    delete sourceSets.generated.java.srcDirs
+}
+
+idea {
+    module {
+        sourceDirs += sourceSets.generated.java.srcDirs
+    }
+}
