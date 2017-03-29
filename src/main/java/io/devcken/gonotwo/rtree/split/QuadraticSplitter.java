@@ -26,7 +26,7 @@ public class QuadraticSplitter {
     remaining.remove(sortedMostWaistful.getLeft());
     remaining.remove(sortedMostWaistful.getRight());
 
-    final int minGroupSize = items.size() / 2;
+    final int minGroupSize = items.size() / min;
 
     while (remaining.size() > 0) {
       assignRemained(group1, group2, remaining, minGroupSize);
