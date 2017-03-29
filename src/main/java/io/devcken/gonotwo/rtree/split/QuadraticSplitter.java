@@ -17,14 +17,14 @@ public class QuadraticSplitter {
   public static <T extends Geom> Pair<List<T>, List<T>> split(List<T> items, int min) {
     Preconditions.checkArgument(items.size() >= 2 && items.size() > min);
 
-    final Pair<T, T> sortedMostWaistful = sortByMostWasteful(items);
+    final Pair<T, T> sortedMostWasteful = sortByMostWasteful(items);
 
-    final List<T> group1 = Lists.newArrayList(sortedMostWaistful.getLeft());
-    final List<T> group2 = Lists.newArrayList(sortedMostWaistful.getRight());
+    final List<T> group1 = Lists.newArrayList(sortedMostWasteful.getLeft());
+    final List<T> group2 = Lists.newArrayList(sortedMostWasteful.getRight());
 
     final List<T> remaining = new ArrayList<T>(items);
-    remaining.remove(sortedMostWaistful.getLeft());
-    remaining.remove(sortedMostWaistful.getRight());
+    remaining.remove(sortedMostWasteful.getLeft());
+    remaining.remove(sortedMostWasteful.getRight());
 
     final int minGroupSize = items.size() / min;
 
