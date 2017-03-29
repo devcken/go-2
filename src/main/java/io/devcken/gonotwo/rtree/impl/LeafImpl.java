@@ -54,12 +54,12 @@ public final class LeafImpl<K extends Geometry, V> implements Node<K, V> {
     else { // overflow
       Pair<List<Entry<K, V>>, List<Entry<K, V>>> splitedPair = QuadraticSplitter.split((List)result, 2);
 
-      List<Node<K, V>> splitedResult = new ArrayList<>(2);
+      List<Node<K, V>> splitResult = new ArrayList<>(2);
 
-      splitedResult.add(NodeFactory.leaveOut(splitedPair.getLeft()));
-      splitedResult.add(NodeFactory.leaveOut(splitedPair.getRight()));
+      splitResult.add(NodeFactory.leaveOut(splitedPair.getLeft()));
+      splitResult.add(NodeFactory.leaveOut(splitedPair.getRight()));
 
-      return splitedResult;
+      return splitResult;
     }
   }
 
