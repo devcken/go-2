@@ -36,20 +36,5 @@ public class PubToiletService {
       .stream()
       .map(Entry::value)
       .collect(Collectors.toList());
-
-
-//    RTree<PubToilet, Point> tree = RTree.star().create();
-//
-//    List<Entry<PubToilet, Point>> entries = pubToilets
-//      .stream()
-//      .map(t -> Entries.entry(t, Geometries.pointGeographic(t.getLongitude(), t.getLatitude())))
-//      .collect(Collectors.toList());
-//
-//    tree = tree.add(entries);
-//
-//    return tree
-//      .search(Geometries.rectangleGeographic(xLong, xLat, yLong, yLat))
-//      .map(Entry::value)
-//      .toList().toBlocking().single();
   }
 }
