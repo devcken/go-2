@@ -55,12 +55,12 @@ public final class NonLeafImpl<K extends Geometry, V> implements Node<K, V> {
     if (newChildren.size() < 4) // <- M
       return Collections.singletonList(NodeFactory.branchOut(newChildren));
     else { // overflow
-      Pair<List<Node<K, V>>, List<Node<K, V>>> splited = QuadraticSplitter.split(newChildren, 2); // <- m
+      Pair<List<Node<K, V>>, List<Node<K, V>>> split = QuadraticSplitter.split(newChildren, 2); // <- m
 
       List<Node<K, V>> result = new ArrayList<>();
 
-      result.add(NodeFactory.branchOut(splited.getLeft()));
-      result.add(NodeFactory.branchOut(splited.getRight()));
+      result.add(NodeFactory.branchOut(split.getLeft()));
+      result.add(NodeFactory.branchOut(split.getRight()));
 
       return result;
     }
